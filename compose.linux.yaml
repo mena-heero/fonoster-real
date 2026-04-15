@@ -1,0 +1,22 @@
+# compose.linux.yaml — Linux-specific Docker Compose override.
+#
+# On Linux, Docker supports network_mode: host which allows RTPEngine to bind
+# directly to the host's network stack. This is the recommended approach for
+# production Linux deployments because it:
+#
+#   1. Eliminates the need to expose a large UDP port range via Docker NAT.
+#   2. Ensures RTP media packets carry the correct source IP address without
+#      requiring port-mapping tricks.
+#   3. Avoids the silent audio failure caused by RTP packets being rewritten
+#      with the Docker bridge IP instead of the host's public IP.
+#
+# Usage:
+#   docker compose -f compose.yaml -f compose.linux.yaml up -d
+#
+# Note: network_mode: host is NOT supported on Docker Desktop for Mac or Windows.
+# Use the default compose.yaml on those platforms (with the limited UDP port range).
+
+services:
+  rtpengine:
+    network_mode: host
+    ports: !reset []

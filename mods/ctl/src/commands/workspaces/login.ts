@@ -21,7 +21,7 @@ import { confirm, input, password } from "@inquirer/prompts";
 import { BaseCommand } from "../../BaseCommand";
 import { addWorkspace, getConfig, WorkspaceConfig } from "../../config";
 import { saveConfig } from "../../config/saveConfig";
-import { CONFIG_FILE } from "../../constants";
+import { CONFIG_FILE, WORKSPACE_ENDPOINT } from "../../constants";
 
 export default class Login extends BaseCommand<typeof Login> {
   static override description = "link a Workspace to the local environment";
@@ -34,7 +34,7 @@ export default class Login extends BaseCommand<typeof Login> {
     const answers = {
       endpoint: await input({
         message: "Endpoint",
-        default: "api.fonoster.com"
+        default: WORKSPACE_ENDPOINT
       }),
       accessKeyId: await input({
         message: "Access Key Id",

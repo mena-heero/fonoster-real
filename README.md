@@ -152,6 +152,11 @@ ASTERISK_SIPPROXY_HOST=<your-host-ip>
 RTPENGINE_PUBLIC_IP=<your-host-ip>
 ```
 
+> **How to find your IP:**
+> - **Cloud VMs** (AWS, GCP, Azure, Oracle): use the instance's public IP shown in the cloud console, or run `curl -s ifconfig.me`.
+> - **Local LAN**: run `hostname -I | awk '{print $1}'` on Linux or `ipconfig getifaddr en0` on macOS.
+> - **Behind a router (home lab)**: use your router's WAN IP (visible at [whatismyip.com](https://www.whatismyip.com)) and set up UDP port forwarding for 5060 and the RTP range (10000–20000 by default).
+
 Also set a static `ASTERISK_SIPPROXY_SECRET` — never leave it as `changeme`.
 
 ### 3. Run the preflight check

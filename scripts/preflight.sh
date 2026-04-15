@@ -115,12 +115,13 @@ fi
 
 # ── 5. RSA key pair must exist ────────────────────────────────
 if [ ! -f config/keys/private.pem ] || [ ! -f config/keys/public.pem ]; then
-  error "config/keys/private.pem or config/keys/public.pem not found. Run: openssl genpkey -algorithm rsa -out config/keys/private.pem -pkeyopt rsa_keygen_bits:2048 && openssl rsa -in config/keys/private.pem -pubout -out config/keys/public.pem"
+  error "config/keys/private.pem or config/keys/public.pem not found. Run the commands in the README self-hosting quick-start section to generate them."
 else
   ok "RSA key pair found in config/keys/."
 fi
 
 # ── 6. APISERVER_CLOAK_ENCRYPTION_KEY should not be default ───
+# The value below is the example from .env.example — not a real production key.
 DEFAULT_CLOAK="k1.aesgcm256.MmPSvzCG9fk654bAbl30tsqq4h9d3N4F11hlue8bGAY="
 if [ "${APISERVER_CLOAK_ENCRYPTION_KEY:-}" = "$DEFAULT_CLOAK" ]; then
   warn "APISERVER_CLOAK_ENCRYPTION_KEY is still set to the example value. Generate a new one with: docker run --rm fonoster/apiserver:0.17.1 cloak-key"

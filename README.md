@@ -124,6 +124,74 @@ To get started with Fonoster, use the following resources:
 - [Getting started with Fonoster](https://docs.fonoster.com/quickstart)
 - [How we created an open-source alternative to Twilio and why it matters](https://dev.to/fonoster/how-we-created-an-open-source-alternative-to-twilio-and-why-it-matters-434g)
 
+## Self-Hosting Quick-Start
+
+This section covers the most common pitfalls when running Fonoster on your own infrastructure.
+
+### 1. Prepare configuration files
+
+```bash
+# Copy and edit the environment file
+cp .env.example .env
+
+# Create the integrations file (add TTS/STT/LLM credentials later)
+cp config/integrations.example.json config/integrations.json
+
+# Generate the RSA key pair used by the API server and Routr
+openssl genpkey -algorithm rsa -out config/keys/private.pem -pkeyopt rsa_keygen_bits:2048
+openssl rsa -in config/keys/private.pem -pubout -out config/keys/public.pem
+```
+
+### 2. Set your host IP address
+
+Open `.env` and set **all three** of the following variables to the same IP address — your public IP for cloud deployments or your LAN IP for local deployments. Getting any one of them wrong will cause audio to fail silently while SIP still connects:
+
+```env
+ROUTR_EXTERNAL_ADDRS=<your-host-ip>
+ASTERISK_SIPPROXY_HOST=<your-host-ip>
+RTPENGINE_PUBLIC_IP=<your-host-ip>
+```
+
+> **How to find your IP:**
+> - **Cloud VMs** (AWS, GCP, Azure, Oracle): use the instance's public IP shown in the cloud console, or run `curl -s ifconfig.me`.
+> - **Local LAN**: run `hostname -I | awk '{print $1}'` on Linux or `ipconfig getifaddr en0` on macOS.
+> - **Behind a router (home lab)**: use your router's WAN IP (visible at [whatismyip.com](https://www.whatismyip.com)) and set up UDP port forwarding for 5060 and the RTP range (10000–20000 by default).
+
+Also set a static `ASTERISK_SIPPROXY_SECRET` — never leave it as `changeme`.
+
+### 3. Run the preflight check
+
+Before every `docker compose up`, run the preflight script to catch configuration mistakes:
+
+```bash
+bash scripts/preflight.sh
+```
+
+### 4. Start the stack
+
+**Linux (recommended):** use the Linux override so RTPEngine runs with `network_mode: host`. This eliminates NAT issues with RTP media and is required for production use on Linux:
+
+```bash
+docker compose -f compose.yaml -f compose.linux.yaml up -d
+```
+
+**macOS / Windows (Docker Desktop):** the default compose file exposes a limited UDP port range (10000–10100). This is sufficient for testing:
+
+```bash
+docker compose up -d
+```
+
+### 5. Configure the CLI for your private instance
+
+Set the `FONOSTER_ENDPOINT` environment variable so the CLI defaults to your instance instead of `api.fonoster.com`:
+
+```bash
+export FONOSTER_ENDPOINT=localhost:8449
+fonoster workspaces login
+```
+
+Or add it permanently to your shell profile / `.env` file.
+
 ## Give a Star! ⭐
 
 Please give it a star if you like this project or plan to use it. Thanks 🙏

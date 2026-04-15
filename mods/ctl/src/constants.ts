@@ -24,4 +24,5 @@ export const CONFIG_FILE = join(homedir(), ".fonoster", "config.json");
 export const FONOSTER_ACCESS_CONTROL_LIST = ["165.22.7.155/32"]; // TODO: We will need to allow passing this as a parameter
 export const FONOSTER_ORIGINATION_URI_BASE = "pstn.fonoster.com";
 export const TWILIO_PSTN_URI_BASE = "pstn.twilio.com";
-export const WORKSPACE_ENDPOINT = "api.fonoster.com";
+export const WORKSPACE_ENDPOINT =
+  process.env.FONOSTER_ENDPOINT ?? "api.fonoster.com";
